@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Create Your Account — Nova Platform</title>
+  <style>
+    /* --------------------------------------------------
+       CSS Reset & Variables
+    -------------------------------------------------- */
+    :root {
+      --bg-dark: #090d16;
+      --bg-surface: #0f172a;
+      --bg-surface-elevated: #1e293b;
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.22);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #06b6d4;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    /* --------------------------------------------------
+       Background Glow Effects
+    -------------------------------------------------- */
+    .bg-glow-top {
+      position: absolute;
+      top: -180px;
+      left: 30%;
+      width: 750px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(168, 85, 247, 0.12) 40%, transparent 70%);
+      filter: blur(95px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .bg-glow-bottom {
+      position: absolute;
+      bottom: -150px;
+      right: 15%;
+      width: 600px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.14) 0%, transparent 70%);
+      filter: blur(100px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* --------------------------------------------------
+       Header
+    -------------------------------------------------- */
+    .auth-header {
+      padding: 24px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+    }
+
+    .back-link:hover {
+      color: var(--text-main);
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-hover);
+    }
+
+    /* --------------------------------------------------
+       Split Layout Auth Container
+    -------------------------------------------------- */
+    .signup-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      margin: 20px auto 40px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 50px;
+      align-items: center;
+      z-index: 1;
+    }
+
+    /* Left: Sign Up Card */
+    .auth-card {
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 38px 36px;
+      backdrop-filter: blur(16px);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.05);
+      position: relative;
+    }
+
+    .auth-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 10%;
+      right: 10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.6), transparent);
+    }
+
+    .auth-title {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.6px;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+
+    /* Social Sign-in Buttons */
+    .social-auth-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .btn-social {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .btn-social:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--border-hover);
+      transform: translateY(-1px);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--text-dim);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .divider span {
+      padding: 0 14px;
+    }
+
+    /* Form Fields */
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #e2e8f0;
+      margin-bottom: 6px;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-dim);
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .form-input,
+    .form-select {
+      width: 100%;
+      padding: 11px 14px 11px 40px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      color: #fff;
+      font-size: 0.92rem;
+      outline: none;
+      transition: var(--transition);
+      font-family: inherit;
+    }
+
+    .form-select {
+      cursor: pointer;
+      padding-right: 32px;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="%2394a3b8" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+    }
+
+    .form-select option {
+      background: var(--bg-surface-elevated);
+      color: var(--text-main);
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.06);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .form-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    /* Password Requirements Helper */
+    .password-hint {
+      font-size: 0.78rem;
+      color: var(--text-dim);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Checkbox */
+    .form-checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin: 18px 0 22px;
+      user-select: none;
+    }
+
+    .custom-checkbox {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border: 1px solid var(--border-color);
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      display: grid;
+      place-content: center;
+      transition: var(--transition);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .custom-checkbox:checked {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .custom-checkbox:checked::before {
+      content: "✓";
+      color: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .checkbox-label {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+      cursor: pointer;
+    }
+
+    .checkbox-label a {
+      color: #818cf8;
+      text-decoration: underline;
+    }
+
+    /* Submit Button */
+    .btn-submit {
+      width: 100%;
+      padding: 13px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+      color: #fff;
+      font-size: 0.98rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 18px var(--primary-glow);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-submit:hover {
+      background: linear-gradient(135deg, var(--primary-hover), #4338ca);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--primary-glow);
+    }
+
+    .auth-footer {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    .auth-footer a {
+      color: #818cf8;
+      font-weight: 600;
+    }
+
+    .auth-footer a:hover {
+      color: #a5b4fc;
+      text-decoration: underline;
+    }
+
+    /* Right: Value Proposition & Perks Side */
+    .perks-card {
+      padding: 20px;
+    }
+
+    .perks-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #c7d2fe;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .perks-title {
+      font-size: 2.1rem;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.6px;
+      margin-bottom: 20px;
+    }
+
+    .perks-title span {
+      background: linear-gradient(135deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .perks-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      margin-bottom: 36px;
+    }
+
+    .perks-item {
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+    }
+
+    .perk-check {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(56, 189, 248, 0.15);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #38bdf8;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .perk-text h4 {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .perk-text p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Testimonial Quote in Perks */
+    .perks-testimonial {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+    }
+
+    .perks-quote {
+      font-size: 0.9rem;
+      color: #cbd5e1;
+      font-style: italic;
+      margin-bottom: 12px;
+      line-height: 1.5;
+    }
+
+    .perks-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .perks-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6366f1, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .perks-author-info {
+      font-size: 0.8rem;
+    }
+
+    .perks-author-info strong {
+      color: var(--text-main);
+      display: block;
+    }
+
+    .perks-author-info span {
+      color: var(--text-dim);
+    }
+
+    /* Page Footer */
+    .page-footer {
+      padding: 20px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .page-footer a {
+      color: var(--text-muted);
+      margin: 0 10px;
+    }
+
+    .page-footer a:hover {
+      color: var(--text-main);
+    }
+
+    /* --------------------------------------------------
+       Responsive
+    -------------------------------------------------- */
+    @media (max-width: 900px) {
+      .signup-wrapper {
+        grid-template-columns: 1fr;
+        max-width: 500px;
+        gap: 36px;
+      }
+      .perks-card {
+        order: -1;
+        text-align: center;
+        padding: 0;
+      }
+      .perks-list {
+        text-align: left;
+      }
+      .perks-badge {
+        margin: 0 auto 16px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .auth-card {
+        padding: 28px 18px;
+      }
+      .social-auth-grid,
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+      .auth-header {
+        padding: 16px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow Effects -->
+  <div class="bg-glow-top"></div>
+  <div class="bg-glow-bottom"></div>
+
+  <!-- Header -->
+  <header class="auth-header">
+    <a href="index.html" class="brand">
+      <div class="brand-icon">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+        </svg>
+      </div>
+      <span>Nova</span>
+    </a>
+
+    <a href="index.html" class="back-link">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      <span>Back to Home</span>
+    </a>
+  </header>
+
+  <!-- Split Signup Layout -->
+  <div class="signup-wrapper">
+    <!-- Left: Sign Up Form -->
+    <main class="auth-card">
+      <h1 class="auth-title">Create your workspace</h1>
+      <p class="auth-subtitle">Start your 14-day free trial. No credit card required.</p>
+
+      <!-- Social Logins -->
+      <div class="social-auth-grid">
+        <button type="button" class="btn-social">
+          <svg width="16" height="16" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.7l3.1-3.1C17.3 1.8 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.7-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5.1 3.7-8.9z"/>
+            <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.8s.2-2.1.4-2.8L1.9 6.3C.7 8.7 0 10.3 0 12s.7 3.3 1.9 5.7l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2-6.4-4.8L1.9 16.4C3.7 20.4 7.5 23 12 23z"/>
+          </svg>
+          <span>Google</span>
+        </button>
+
+        <button type="button" class="btn-social">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+          </svg>
+          <span>GitHub</span>
+        </button>
+      </div>
+
+      <div class="divider">
+        <span>or register with email</span>
+      </div>
+
+      <form onsubmit="event.preventDefault(); alert('Account created! Welcome to Nova.'); window.location.href='index.html';">
+        <!-- First & Last Name -->
+        <div class="form-row">
+          <div>
+            <label class="form-label" for="fname">First Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" id="fname" class="form-input" placeholder="Sarah" required />
+            </div>
+          </div>
+          <div>
+            <label class="form-label" for="lname">Last Name</label>
+            <div class="input-wrapper">
+              <span class="input-icon">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </span>
+              <input type="text" id="lname" class="form-input" placeholder="Lin" required />
+            </div>
+          </div>
+        </div>
+
+        <!-- Work Email -->
+        <div class="form-group">
+          <label class="form-label" for="email">Work Email</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            </span>
+            <input type="email" id="email" class="form-input" placeholder="sarah@company.com" required />
+          </div>
+        </div>
+
+        <!-- Company Size Dropdown -->
+        <div class="form-group">
+          <label class="form-label" for="team-size">Company Size</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+            </span>
+            <select id="team-size" class="form-select" required>
+              <option value="" disabled selected>Select team size...</option>
+              <option value="1-10">1 – 10 people</option>
+              <option value="11-50">11 – 50 people</option>
+              <option value="51-200">51 – 200 people</option>
+              <option value="201+">201+ people (Enterprise)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label class="form-label" for="password">Create Password</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            </span>
+            <input type="password" id="password" class="form-input" placeholder="At least 8 characters" minlength="8" required />
+          </div>
+          <div class="password-hint">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            <span>Must contain at least 8 characters including numbers</span>
+          </div>
+        </div>
+
+        <!-- Terms agreement -->
+        <div class="form-checkbox-row">
+          <input type="checkbox" id="terms" class="custom-checkbox" required checked />
+          <label for="terms" class="checkbox-label">
+            I agree to Nova's <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
+          </label>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit">
+          <span>Create Free Workspace</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+    </main>
+
+    <!-- Right: Perks & Social Proof -->
+    <aside class="perks-card">
+      <div class="perks-badge">⚡ Instant Onboarding</div>
+      <h2 class="perks-title">
+        The future of <span>intelligent work</span> is here.
+      </h2>
+
+      <ul class="perks-list">
+        <li class="perks-item">
+          <div class="perk-check">✓</div>
+          <div class="perk-text">
+            <h4>14-day unrestricted trial</h4>
+            <p>Access all Pro features including autonomous agents and live telemetry.</p>
+          </div>
+        </li>
+        <li class="perks-item">
+          <div class="perk-check">✓</div>
+          <div class="perk-text">
+            <h4>No credit card upfront</h4>
+            <p>Explore at your own pace without unexpected automatic billing.</p>
+          </div>
+        </li>
+        <li class="perks-item">
+          <div class="perk-check">✓</div>
+          <div class="perk-text">
+            <h4>One-click team invitations</h4>
+            <p>Bring your entire engineering or design squad in under 60 seconds.</p>
+          </div>
+        </li>
+      </ul>
+
+      <!-- User Testimonial Card -->
+      <div class="perks-testimonial">
+        <p class="perks-quote">
+          "Nova saved us hundreds of manual coordination hours within our first two sprints. It feels like magic."
+        </p>
+        <div class="perks-author">
+          <div class="perks-avatar">MD</div>
+          <div class="perks-author-info">
+            <strong>Marcus Drake</strong>
+            <span>Lead Architect, Vortex Labs</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Page Footer -->
+  <footer class="page-footer">
+    <div style="margin-bottom: 8px;">
+      <a href="#">Terms of Service</a>
+      <span>•</span>
+      <a href="#">Privacy Policy</a>
+      <span>•</span>
+      <a href="#">Security Overview</a>
+      <span>•</span>
+      <a href="#">Contact Support</a>
+    </div>
+    <div>&copy; 2026 Nova Technologies Inc. All rights reserved.</div>
+  </footer>
+
+</body>
+</html>
+

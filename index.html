@@ -1,0 +1,1685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nova — AI-Powered Workflow Platform</title>
+  <style>
+    /* --------------------------------------------------
+       CSS Reset & Variables
+    -------------------------------------------------- */
+    :root {
+      --bg-dark: #090d16;
+      --bg-surface: #0f172a;
+      --bg-surface-elevated: #1e293b;
+      --bg-glass: rgba(15, 23, 42, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-hover: rgba(255, 255, 255, 0.2);
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #06b6d4;
+      --accent-purple: #a855f7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-full: 9999px;
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: var(--font-family);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    /* --------------------------------------------------
+       Background Ambient Glow
+    -------------------------------------------------- */
+    .bg-glow-1 {
+      position: absolute;
+      top: -120px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 700px;
+      height: 450px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.22) 0%, rgba(168, 85, 247, 0.12) 40%, transparent 70%);
+      filter: blur(80px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    .bg-glow-2 {
+      position: absolute;
+      top: 60%;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(6, 182, 212, 0.12) 0%, transparent 70%);
+      filter: blur(100px);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* --------------------------------------------------
+       Layout & Containers
+    -------------------------------------------------- */
+    .container {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    section {
+      padding: 100px 0;
+      position: relative;
+    }
+
+    /* --------------------------------------------------
+       Header & Navigation
+    -------------------------------------------------- */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 1000;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border-color);
+      transition: var(--transition);
+    }
+
+    .nav-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 74px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.3rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .brand-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .nav-links a:hover {
+      color: var(--text-main);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* --------------------------------------------------
+       Buttons
+    -------------------------------------------------- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 22px;
+      border-radius: var(--radius-full);
+      font-size: 0.92rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: var(--transition);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), #4f46e5);
+      color: #ffffff;
+      box-shadow: 0 4px 18px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--primary-glow);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--border-hover);
+      transform: translateY(-2px);
+    }
+
+    .btn-lg {
+      padding: 14px 28px;
+      font-size: 1rem;
+    }
+
+    /* --------------------------------------------------
+       Hero Section
+    -------------------------------------------------- */
+    .hero {
+      padding-top: 170px;
+      padding-bottom: 80px;
+      text-align: center;
+      position: relative;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      color: #c7d2fe;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 24px;
+    }
+
+    .badge-dot {
+      width: 7px;
+      height: 7px;
+      background: #38bdf8;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #38bdf8;
+    }
+
+    .hero-title {
+      font-size: 3.8rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      max-width: 900px;
+      margin: 0 auto 24px;
+    }
+
+    .gradient-text {
+      background: linear-gradient(135deg, #ffffff 30%, #c7d2fe 65%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-description {
+      font-size: 1.2rem;
+      color: var(--text-muted);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      font-weight: 400;
+    }
+
+    .hero-buttons {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 50px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stats-bar {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-bottom: 60px;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .hero-stat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Mockup Display */
+    .mockup-wrapper {
+      position: relative;
+      max-width: 1040px;
+      margin: 0 auto;
+      border-radius: var(--radius-lg);
+      padding: 10px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.02) 100%);
+      box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
+    }
+
+    .mockup-window {
+      background: var(--bg-surface);
+      border-radius: calc(var(--radius-lg) - 6px);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    .mockup-header {
+      background: #0b1120;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .mockup-dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+    }
+    .mockup-dot.red { background: #ef4444; }
+    .mockup-dot.yellow { background: #f59e0b; }
+    .mockup-dot.green { background: #10b981; }
+
+    .mockup-body {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 24px;
+      text-align: left;
+    }
+
+    .mockup-sidebar {
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: var(--radius-md);
+      padding: 16px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .mockup-nav-item {
+      padding: 8px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .mockup-nav-item.active {
+      background: rgba(99, 102, 241, 0.15);
+      color: #818cf8;
+      font-weight: 600;
+    }
+
+    .mockup-main {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .mockup-grid-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .mini-card {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      padding: 16px;
+      border-radius: var(--radius-md);
+    }
+
+    .mini-card-title {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .mini-card-value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .mini-card-trend {
+      font-size: 0.78rem;
+      color: #34d399;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mockup-chart-box {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .chart-bars {
+      display: flex;
+      align-items: flex-end;
+      gap: 16px;
+      height: 120px;
+      padding-top: 10px;
+    }
+
+    .bar {
+      flex: 1;
+      background: linear-gradient(180deg, var(--primary), rgba(99, 102, 241, 0.2));
+      border-radius: 6px 6px 0 0;
+      transition: height 0.5s ease;
+      position: relative;
+    }
+
+    .bar:hover {
+      background: linear-gradient(180deg, var(--accent), var(--primary));
+    }
+
+    /* --------------------------------------------------
+       Logos / Social Proof Section
+    -------------------------------------------------- */
+    .logos-section {
+      padding: 40px 0 70px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logos-title {
+      text-align: center;
+      font-size: 0.85rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 30px;
+      font-weight: 600;
+    }
+
+    .logos-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 48px;
+      flex-wrap: wrap;
+      opacity: 0.7;
+    }
+
+    .logo-item {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      filter: grayscale(1);
+      transition: var(--transition);
+    }
+
+    .logo-item:hover {
+      filter: grayscale(0);
+      color: var(--text-main);
+      opacity: 1;
+    }
+
+    /* --------------------------------------------------
+       Section Header Utilities
+    -------------------------------------------------- */
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto 64px;
+    }
+
+    .section-tag {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: inline-block;
+    }
+
+    .section-title {
+      font-size: 2.5rem;
+      font-weight: 800;
+      letter-spacing: -0.8px;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+    }
+
+    /* --------------------------------------------------
+       Features Grid
+    -------------------------------------------------- */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .feature-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+
+    .feature-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: rgba(99, 102, 241, 0.1);
+      border: 1px solid rgba(99, 102, 241, 0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #818cf8;
+      margin-bottom: 22px;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover .feature-icon {
+      background: var(--primary);
+      color: #ffffff;
+      transform: scale(1.05);
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .feature-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* --------------------------------------------------
+       How It Works / Steps
+    -------------------------------------------------- */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      position: relative;
+    }
+
+    .step-card {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 36px 28px;
+      position: relative;
+    }
+
+    .step-number {
+      font-size: 2.2rem;
+      font-weight: 900;
+      color: rgba(99, 102, 241, 0.35);
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+
+    .step-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .step-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* --------------------------------------------------
+       Metrics / Numbers Banner
+    -------------------------------------------------- */
+    .metrics-section {
+      background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(9, 13, 22, 0.9) 100%);
+      border-top: 1px solid var(--border-color);
+      border-bottom: 1px solid var(--border-color);
+      padding: 70px 0;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 24px;
+      text-align: center;
+    }
+
+    .metric-value {
+      font-size: 3rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+
+    .metric-label {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    /* --------------------------------------------------
+       Pricing Section
+    -------------------------------------------------- */
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    .pricing-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 40px 32px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .pricing-card:hover {
+      border-color: var(--border-hover);
+      transform: translateY(-4px);
+    }
+
+    .pricing-card.popular {
+      background: linear-gradient(180deg, #131c35 0%, var(--bg-surface) 100%);
+      border: 2px solid var(--primary);
+      box-shadow: 0 15px 35px -5px var(--primary-glow);
+    }
+
+    .popular-tag {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 4px 14px;
+      border-radius: var(--radius-full);
+    }
+
+    .plan-name {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .plan-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-bottom: 24px;
+      min-height: 44px;
+    }
+
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-bottom: 24px;
+    }
+
+    .price-currency {
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+
+    .price-amount {
+      font-size: 3rem;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .price-period {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .plan-features {
+      list-style: none;
+      margin-bottom: 32px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .plan-feature-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.92rem;
+      color: var(--text-main);
+    }
+
+    .plan-feature-item svg {
+      flex-shrink: 0;
+      color: #34d399;
+    }
+
+    .plan-feature-item.disabled {
+      color: var(--text-dim);
+    }
+
+    .plan-feature-item.disabled svg {
+      color: var(--text-dim);
+    }
+
+    /* --------------------------------------------------
+       Testimonials Section
+    -------------------------------------------------- */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+    }
+
+    .testimonial-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      color: #f59e0b;
+      margin-bottom: 16px;
+    }
+
+    .testimonial-quote {
+      font-size: 0.98rem;
+      color: #cbd5e1;
+      margin-bottom: 24px;
+      line-height: 1.6;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #4f46e5, #06b6d4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+
+    .author-info h4 {
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    .author-info p {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    /* --------------------------------------------------
+       FAQ Section
+    -------------------------------------------------- */
+    .faq-wrapper {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .faq-item {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .faq-item details {
+      padding: 20px 24px;
+    }
+
+    .faq-item summary {
+      font-weight: 600;
+      font-size: 1.05rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      list-style: none;
+      user-select: none;
+    }
+
+    .faq-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-item summary::after {
+      content: '+';
+      font-size: 1.4rem;
+      font-weight: 400;
+      color: var(--text-muted);
+      transition: transform 0.2s ease;
+    }
+
+    .faq-item details[open] summary::after {
+      content: '−';
+      color: var(--accent);
+    }
+
+    .faq-item p {
+      margin-top: 14px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* --------------------------------------------------
+       Final CTA Banner
+    -------------------------------------------------- */
+    .cta-banner {
+      background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.28) 0%, rgba(15, 23, 42, 0.95) 75%);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 60px;
+    }
+
+    .cta-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 16px;
+    }
+
+    .cta-subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 36px;
+    }
+
+    .cta-form {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      max-width: 480px;
+      margin: 0 auto;
+      flex-wrap: wrap;
+    }
+
+    .cta-input {
+      flex: 1;
+      min-width: 260px;
+      padding: 14px 20px;
+      border-radius: var(--radius-full);
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-color);
+      color: #fff;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .cta-input:focus {
+      border-color: var(--primary);
+      background: rgba(255, 255, 255, 0.12);
+      box-shadow: 0 0 0 3px var(--primary-glow);
+    }
+
+    .cta-input::placeholder {
+      color: var(--text-dim);
+    }
+
+    /* --------------------------------------------------
+       Footer
+    -------------------------------------------------- */
+    footer {
+      border-top: 1px solid var(--border-color);
+      padding: 70px 0 30px;
+      background: #060911;
+      font-size: 0.9rem;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(3, 1fr);
+      gap: 48px;
+      margin-bottom: 50px;
+    }
+
+    .footer-brand p {
+      color: var(--text-muted);
+      margin-top: 14px;
+      max-width: 320px;
+      font-size: 0.9rem;
+    }
+
+    .footer-col h4 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      color: var(--text-main);
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .footer-col a {
+      color: var(--text-muted);
+    }
+
+    .footer-col a:hover {
+      color: var(--text-main);
+    }
+
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    /* --------------------------------------------------
+       Responsive Design
+    -------------------------------------------------- */
+    @media (max-width: 992px) {
+      .hero-title {
+        font-size: 2.8rem;
+      }
+      .features-grid,
+      .steps-grid,
+      .pricing-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+        max-width: 540px;
+        margin: 0 auto;
+      }
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 36px;
+      }
+      .mockup-body {
+        grid-template-columns: 1fr;
+      }
+      .mockup-sidebar {
+        display: none;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 36px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .hero-title {
+        font-size: 2.2rem;
+      }
+      .hero-stats-bar {
+        flex-direction: column;
+        gap: 12px;
+        align-items: center;
+      }
+      .mockup-grid-cards {
+        grid-template-columns: 1fr;
+      }
+      .cta-title {
+        font-size: 2rem;
+      }
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+      .footer-bottom {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Background Accents -->
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+
+  <!-- Header / Navigation -->
+  <header>
+    <div class="container nav-container">
+      <a href="#" class="brand">
+        <div class="brand-icon">
+          <!-- Sparkle / Star SVG -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+          </svg>
+        </div>
+        <span>Nova</span>
+      </a>
+
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#workflow">How It Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-secondary">Sign In</a>
+        <a href="#cta" class="btn btn-primary">Get Started Free</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span>Version 2.0 is live — Autonomous Workflows</span>
+      </div>
+
+      <h1 class="hero-title">
+        The workspace where teams build <span class="gradient-text">10x faster with AI</span>
+      </h1>
+
+      <p class="hero-description">
+        Nova unifies task management, smart automations, and intelligent copilot assistance into one ultra-fast interface designed for high-performing teams.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#cta" class="btn btn-primary btn-lg">
+          Start 14-Day Free Trial
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+        <a href="#features" class="btn btn-secondary btn-lg">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polygon points="10 8 16 12 10 16 10 8"></polygon>
+          </svg>
+          Watch Demo
+        </a>
+      </div>
+
+      <div class="hero-stats-bar">
+        <div class="hero-stat-item">
+          <svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>No credit card required</span>
+        </div>
+        <div class="hero-stat-item">
+          <svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>Setup in 2 minutes</span>
+        </div>
+        <div class="hero-stat-item">
+          <svg width="18" height="18" fill="none" stroke="#38bdf8" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+          </svg>
+          <span>Cancel anytime</span>
+        </div>
+      </div>
+
+      <!-- Interactive Mockup Preview -->
+      <div class="mockup-wrapper">
+        <div class="mockup-window">
+          <div class="mockup-header">
+            <div class="mockup-dot red"></div>
+            <div class="mockup-dot yellow"></div>
+            <div class="mockup-dot green"></div>
+          </div>
+          <div class="mockup-body">
+            <!-- Sidebar -->
+            <div class="mockup-sidebar">
+              <div class="mockup-nav-item active">⚡ Overview</div>
+              <div class="mockup-nav-item">📊 Performance</div>
+              <div class="mockup-nav-item">🤖 Automation Rules</div>
+              <div class="mockup-nav-item">📁 Shared Files</div>
+              <div class="mockup-nav-item">⚙️ Settings</div>
+            </div>
+
+            <!-- Content Area -->
+            <div class="mockup-main">
+              <div class="mockup-grid-cards">
+                <div class="mini-card">
+                  <div class="mini-card-title">Completed Tasks</div>
+                  <div class="mini-card-value">1,482</div>
+                  <div class="mini-card-trend">↑ 24% vs last week</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-card-title">Time Saved</div>
+                  <div class="mini-card-value">128 hrs</div>
+                  <div class="mini-card-trend">↑ 18% team efficiency</div>
+                </div>
+                <div class="mini-card">
+                  <div class="mini-card-title">Accuracy Rate</div>
+                  <div class="mini-card-value">99.4%</div>
+                  <div class="mini-card-trend">↑ 0.6% error reduction</div>
+                </div>
+              </div>
+
+              <!-- Mini Activity Chart Visual -->
+              <div class="mockup-chart-box">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                  <strong style="font-size:0.9rem;">Weekly Automation Throughput</strong>
+                  <span style="font-size:0.75rem; color:var(--accent);">Live Telemetry</span>
+                </div>
+                <div class="chart-bars">
+                  <div class="bar" style="height: 45%;"></div>
+                  <div class="bar" style="height: 60%;"></div>
+                  <div class="bar" style="height: 52%;"></div>
+                  <div class="bar" style="height: 80%;"></div>
+                  <div class="bar" style="height: 68%;"></div>
+                  <div class="bar" style="height: 94%;"></div>
+                  <div class="bar" style="height: 88%;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Social Proof Logos -->
+  <section class="logos-section">
+    <div class="container">
+      <p class="logos-title">Trusted by engineering & product teams at</p>
+      <div class="logos-row">
+        <div class="logo-item">◈ PULSEFLOW</div>
+        <div class="logo-item">▲ VORTEX LABS</div>
+        <div class="logo-item">◼ HYPERSCALE</div>
+        <div class="logo-item">● ACUMEN</div>
+        <div class="logo-item">◆ SPHERE AI</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Key Capabilities</span>
+        <h2 class="section-title">Built for speed, crafted for scale</h2>
+        <p class="section-subtitle">
+          Everything your modern team needs to collaborate seamlessly, automate repetitive manual steps, and ship quality deliverables.
+        </p>
+      </div>
+
+      <div class="features-grid">
+        <!-- Feature 1 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Autonomous Workflows</h3>
+          <p class="feature-desc">
+            Trigger complex multi-stage tasks with zero code. Let Nova orchestrate notifications, approvals, and deployments automatically.
+          </p>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <circle cx="12" cy="12" r="9"/>
+              <path d="M12 7v5l3 3"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Real-Time Sync</h3>
+          <p class="feature-desc">
+            Sub-millisecond updates across all devices. Keep your team completely aligned without refreshing or losing state.
+          </p>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Enterprise Security</h3>
+          <p class="feature-desc">
+            End-to-end encryption, SOC2 Type II compliance, granular RBAC, and single sign-on (SSO) built right into the platform core.
+          </p>
+        </div>
+
+        <!-- Feature 4 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">Intelligent Insights</h3>
+          <p class="feature-desc">
+            Deep performance metrics identify team bottlenecks and velocity dips before they affect delivery roadmaps.
+          </p>
+        </div>
+
+        <!-- Feature 5 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16m-7 6h7"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">100+ Native Integrations</h3>
+          <p class="feature-desc">
+            Seamlessly connect your existing stack: GitHub, Slack, Jira, Figma, Linear, Notion, and Google Workspace in seconds.
+          </p>
+        </div>
+
+        <!-- Feature 6 -->
+        <div class="feature-card">
+          <div class="feature-icon">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1 1 0 0 1-2 0V7a1 1 0 0 1 2 0z"/>
+            </svg>
+          </div>
+          <h3 class="feature-title">AI Natural Language Queries</h3>
+          <p class="feature-desc">
+            Ask questions like "What tasks are blocking release 2.4?" and get instant answers with traceable source context.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section id="workflow" style="background: rgba(255, 255, 255, 0.01);">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Workflow</span>
+        <h2 class="section-title">How Nova transforms your work</h2>
+        <p class="section-subtitle">Get started in minutes and see productivity soar across your organization.</p>
+      </div>
+
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3 class="step-title">Connect your tools</h3>
+          <p class="step-desc">
+            Authorize your existing repos, issue trackers, and comms in a few clicks. Nova instantly indexes your ecosystem.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3 class="step-title">Automate workflows</h3>
+          <p class="step-desc">
+            Select from pre-built recipes or type plain English instructions to create autonomous agents for routine procedures.
+          </p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3 class="step-title">Ship at scale</h3>
+          <p class="step-desc">
+            Monitor real-time progress, eliminate friction points, and focus on high-impact strategic product challenges.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Metrics Counter Banner -->
+  <div class="metrics-section">
+    <div class="container">
+      <div class="metrics-grid">
+        <div>
+          <div class="metric-value">99.99%</div>
+          <div class="metric-label">System Uptime SLA</div>
+        </div>
+        <div>
+          <div class="metric-value">12M+</div>
+          <div class="metric-label">Tasks Automated</div>
+        </div>
+        <div>
+          <div class="metric-value">3.5x</div>
+          <div class="metric-label">Faster Time to Market</div>
+        </div>
+        <div>
+          <div class="metric-value">4.9 / 5</div>
+          <div class="metric-label">Customer Satisfaction</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pricing Section -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Transparent Pricing</span>
+        <h2 class="section-title">Simple plans for every stage</h2>
+        <p class="section-subtitle">Pick the tier that fits your team. Upgrade or downgrade at any time.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <!-- Starter Plan -->
+        <div class="pricing-card">
+          <h3 class="plan-name">Starter</h3>
+          <p class="plan-desc">Perfect for small teams and early stage prototypes.</p>
+          <div class="plan-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">0</span>
+            <span class="price-period">/ month</span>
+          </div>
+          <ul class="plan-features">
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Up to 5 team members
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              1,000 automated actions/mo
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Community support
+            </li>
+            <li class="plan-feature-item disabled">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Custom AI fine-tuning
+            </li>
+            <li class="plan-feature-item disabled">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Dedicated account manager
+            </li>
+          </ul>
+          <a href="#cta" class="btn btn-secondary">Get Started Free</a>
+        </div>
+
+        <!-- Pro Plan (Popular) -->
+        <div class="pricing-card popular">
+          <div class="popular-tag">Most Popular</div>
+          <h3 class="plan-name">Professional</h3>
+          <p class="plan-desc">Ideal for fast-scaling growth companies.</p>
+          <div class="plan-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">29</span>
+            <span class="price-period">/ member / mo</span>
+          </div>
+          <ul class="plan-features">
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Unlimited team members
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Unlimited automated actions
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Advanced AI Copilot features
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Priority email & chat support
+            </li>
+            <li class="plan-feature-item disabled">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              Custom SLA guarantee
+            </li>
+          </ul>
+          <a href="#cta" class="btn btn-primary">Start 14-Day Free Trial</a>
+        </div>
+
+        <!-- Enterprise Plan -->
+        <div class="pricing-card">
+          <h3 class="plan-name">Enterprise</h3>
+          <p class="plan-desc">For organizations with strict governance and security demands.</p>
+          <div class="plan-price">
+            <span class="price-currency">$</span>
+            <span class="price-amount">79</span>
+            <span class="price-period">/ member / mo</span>
+          </div>
+          <ul class="plan-features">
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Everything in Pro
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Custom private AI fine-tuning
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              99.99% uptime SLA guarantee
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Dedicated customer success lead
+            </li>
+            <li class="plan-feature-item">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              SSO, SAML & audit logging
+            </li>
+          </ul>
+          <a href="#cta" class="btn btn-secondary">Contact Sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials Section -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Testimonials</span>
+        <h2 class="section-title">Loved by engineers & creators</h2>
+        <p class="section-subtitle">See how teams are saving tens of engineering hours every sprint.</p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div>
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">
+              "Nova cut our team's manual release coordination time in half. The automated workflow triggers are like having two extra engineers on duty."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">SL</div>
+            <div class="author-info">
+              <h4>Sarah Lin</h4>
+              <p>VP of Engineering at PulseFlow</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div>
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">
+              "The interface is blazingly fast and delightfully responsive. Switching from our older cluttered tools felt like stepping into the future."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">MD</div>
+            <div class="author-info">
+              <h4>Marcus Drake</h4>
+              <p>Lead Architect at Vortex Labs</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card">
+          <div>
+            <div class="testimonial-stars">★★★★★</div>
+            <p class="testimonial-quote">
+              "The natural language query assistant is genuinely game changing. Non-technical PMs can get real answers on release state in seconds."
+            </p>
+          </div>
+          <div class="testimonial-author">
+            <div class="author-avatar">EP</div>
+            <div class="author-info">
+              <h4>Elena Patel</h4>
+              <p>Head of Product at Acumen</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <section id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">Got Questions?</span>
+        <h2 class="section-title">Frequently Asked Questions</h2>
+        <p class="section-subtitle">Everything you need to know about getting started.</p>
+      </div>
+
+      <div class="faq-wrapper">
+        <div class="faq-item">
+          <details open>
+            <summary>Can I try Nova for free before purchasing?</summary>
+            <p>
+              Yes! We provide a full-featured 14-day free trial on the Professional tier with no credit card required. You can also stay on our generous free Starter plan forever.
+            </p>
+          </details>
+        </div>
+
+        <div class="faq-item">
+          <details>
+            <summary>How does Nova keep my organization's data secure?</summary>
+            <p>
+              We adhere to strict SOC2 Type II compliance standards. All customer data is encrypted both in transit (TLS 1.3) and at rest (AES-256). We never train public foundation models on your private workspace data.
+            </p>
+          </details>
+        </div>
+
+        <div class="faq-item">
+          <details>
+            <summary>Which third-party tools can I connect?</summary>
+            <p>
+              Nova integrates out of the box with over 100+ platforms including GitHub, GitLab, Jira, Slack, Linear, Google Workspace, and Figma. Custom integrations can also be built using our REST & Webhook APIs.
+            </p>
+          </details>
+        </div>
+
+        <div class="faq-item">
+          <details>
+            <summary>What happens if our team needs more automation capacity?</summary>
+            <p>
+              You can instantly scale your automation quota with flexible add-ons or upgrade seamlessly to our Enterprise tier which includes dedicated compute and bespoke SLA terms.
+            </p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA Section -->
+  <section id="cta" style="padding-top: 20px;">
+    <div class="container">
+      <div class="cta-banner">
+        <h2 class="cta-title">Ready to supercharge your workflow?</h2>
+        <p class="cta-subtitle">
+          Join thousands of developers and product teams who build and ship faster with Nova today.
+        </p>
+        <form class="cta-form" onsubmit="event.preventDefault(); alert('Thank you for signing up!');">
+          <input type="email" class="cta-input" placeholder="Enter your work email..." required />
+          <button type="submit" class="btn btn-primary btn-lg">Get Started Free</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand">
+            <div class="brand-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </div>
+            <span>Nova</span>
+          </div>
+          <p>The next-generation autonomous workspace built for modern engineering and product teams.</p>
+        </div>
+
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#workflow">Workflow</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#">Roadmap</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Resources</h4>
+          <ul>
+            <li><a href="#">Documentation</a></li>
+            <li><a href="#">API Reference</a></li>
+            <li><a href="#">Guides & Tutorials</a></li>
+            <li><a href="#">Community Forum</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>&copy; 2026 Nova Technologies Inc. All rights reserved.</div>
+        <div style="display:flex; gap:20px;">
+          <a href="#">Privacy</a>
+          <a href="#">Security</a>
+          <a href="#">Status</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>
+
